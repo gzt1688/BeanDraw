@@ -1,0 +1,14 @@
+{
+  "id": "blank",
+  "module": "cross_stitch",
+  "name_key": "template.blank",
+  "version": 1,
+  "params": {
+    "grid_width": 100,
+    "grid_height": 100,
+    "max_colors": 16,
+    "bead_mode": 0,
+    "fabric_count": 14,
+    "dither": 0
+  }
+}

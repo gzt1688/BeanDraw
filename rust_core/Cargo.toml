@@ -1,0 +1,31 @@
+[package]
+name = "craftmaster-core"
+version = "0.1.0"
+edition = "2021"
+description = "BeanDraw cross-platform business kernel (no UI). FFI C ABI for Qt6 UI layer."
+license = "MIT"
+publish = false
+
+[lib]
+# staticlib：Qt UI 静态链接（主分发形态，产出 craftmaster_core.lib）
+# rlib：Rust 侧示例 / 集成测试复用
+crate-type = ["staticlib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+kurbo = "0.11"
+image = { version = "0.25", default-features = false, features = ["png"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+bincode = "1"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+printpdf = "0.7"
+tracing = "0.1"
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# dxf-rs 评估后未采用（成熟度风险，见开发大纲第 10 章风险 12）：
+# DXF 导出使用 export/dxf.rs 内置最小 R12 writer（ASCII LINE/LWPOLYLINE），零依赖可控。
+
+[profile.release]
+opt-level = 2
+panic = "abort" # FFI 边界禁止 Rust panic 展开到 C++（另在 lib.rs 统一 catch_unwind）

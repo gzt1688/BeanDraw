@@ -1,0 +1,53 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust-core:
+    name: rust-core (build / test / clippy)
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: rust_core
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.98.1
+        id: rust
+        with:
+          components: clippy
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust_core/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('rust_core/Cargo.lock') }}-rust-1.98.1
+      - name: Build
+        run: cargo build --verbose
+      - name: Test
+        run: cargo test --verbose
+      - name: Clippy (warnings as errors)
+        run: cargo clippy --all-targets -- -D warnings
+      - name: OHOS cross-compile check (kernel only)
+        run: |
+          rustup target add aarch64-unknown-linux-gnu
+          cargo check --release --target aarch64-unknown-linux-gnu
+        continue-on-error: true # OHOS 工具链在 Phase 0 spike 后启用为必需
+
+  # qt-ui:
+  #   name: qt-ui (build)
+  #   runs-on: windows-latest
+  #   # 需要 Qt6 + CMake + ADS 环境；Phase 0 完成后启用：
+  #   # steps:
+  #   #   - uses: actions/checkout@v4
+  #   #   - uses: jurplel/install-qt-action@v4
+  #   #     with:
+  #   #       version: '6.7.*'
+  #   #   - run: powershell -File build_scripts/build_win.ps1

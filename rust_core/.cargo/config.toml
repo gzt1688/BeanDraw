@@ -1,0 +1,22 @@
+# Cargo 构建配置（项目级）
+#
+# incremental = false —— 关闭增量编译，原因见下：
+#
+#   debug profile 默认开启增量编译，rustc 会在
+#   target/debug/incremental/<crate>-<hash>/ 下为每次编译会话创建 `s-*.lock` 文件，
+#   编译结束后立即删除。Windows 上这些 0 字节文件常被系统实时扫描（MsMpEng）
+#   短暂持有句柄，导致删除失败，于是每次 cargo build / test / clippy 都刷出：
+#
+#       warning: error deleting lock file for incremental compilation session
+#       directory `...\\s-xxx.lock`: 拒绝访问。 (os error 5)
+#       warning: `craftmaster-core` (lib) generated 1 warning
+#
+#   该警告与代码质量无关，但会污染 RUN.bat 的 build / test / clippy 输出，
+#   且和 clippy 的 `-D warnings` 策略混在一起容易被误判为真实问题。
+#
+#   关闭增量编译后构建仍然完全正确，只是每次改动都全量重编译；
+#   本项目内核规模小（全量编译 < 20s），换输出干净是划算的。
+#
+# 若后续内核规模变大、增量编译收益超过警告困扰，可删掉本文件恢复默认。
+[build]
+incremental = false

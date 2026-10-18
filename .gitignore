@@ -1,0 +1,35 @@
+# 编译产物
+output/
+target/
+build/
+*.obj
+*.exe
+*.dll
+*.lib
+*.pdb
+*.exp
+*.qm
+.cache/
+
+# IDE
+.vs/
+.vscode/
+*.user
+
+# 工程自动保存 / 崩溃日志
+*.autosave
+logs/
+
+# 开发文档与参考素材（不上传仓库）
+*.vectorcraft
+deps/
+.repro/
+.diag/
+.workbuddy/
+echo/
+EXIT/
+十字绣模块参考代码/
+Cstitch-master.zip
+开发大纲.md
+人体编辑器依赖库.md
+服装模块的人体编辑模块开发文档.md
